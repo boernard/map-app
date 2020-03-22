@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import './static/normalize.css'
 //import { App } from './components/';
 declare let module: any
 
