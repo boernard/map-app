@@ -2,6 +2,14 @@
 
 html {
   box-sizing: border-box;
+  height: 100%;
+  width: 100%;
+  font-family: Lato, Helvetica, sans-serif;
+}
+
+body {
+  height: 100%;
+  width: 100%;
 }
 
 *,

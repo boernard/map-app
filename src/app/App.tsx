@@ -1,14 +1,13 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import './static/normalize.css'
-//import { App } from './components/';
+import { MapAppController } from './components/App';
 declare let module: any
 
 
-/*
-ReactDOM.render(<App />,
+
+ReactDOM.render(<MapAppController />,
     document.getElementById('root'));
-*/
 
 if (module.hot) {
     module.hot.accept();
