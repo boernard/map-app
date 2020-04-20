@@ -1,10 +1,15 @@
+:root {
+  --light-grey: #D7D7D7
+}
+
 html {
   font-family: Avenir, Open-Sans, sans-serif;
-  font-size: 16px;
+  font-size: 14px;
   color: #252525;
+  line-height: 1.5;
 }
 
 h3 {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: bold;
 }

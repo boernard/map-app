@@ -1,9 +1,39 @@
-.mapView {
-  width: 100vw;
-  height: 50vh
+.mapWrapper {
+  height: 50vh;
 }
 
-.mapContainer {
-  width: 100%;
-  height: 100%
+.mapView {
+  width: 100vw;
+  height: 50vh;
+  position: fixed;
+}
+
+.contentView {
+  height: 50vh;
+  padding: 0 8px;
+  overflow: scroll;
+}
+
+.card {
+  background: #FFFFFF;
+  box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.11);
+  border-radius: 3px;
+  margin: 12px 4px 4px;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+.card .header {
+  display: flex;
+  height: 20px;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.card .title {
+  font-weight: 700;
+}
+
+.card .category {
+  font-weight: 100;
 }
