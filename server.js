@@ -5,7 +5,7 @@ const path = require('path'),
   port = process.env.PORT || 3000
 let webpackConfigPath
 
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV == 'production') {
   webpackConfigPath = './webpack.prod.js'
 } else {
   webpackConfigPath = './webpack.dev.js'
