@@ -24,6 +24,22 @@ type ContentViewProps = {
   locations?: MapItem[]
 }
 
+type CardProps = {
+  onClick?: React.MouseEventHandler,
+  children: object,
+  className: string
+}
+
+type MapViewProps = {
+  activeLocationId: number
+  setActiveLocationId: React.Dispatch<React.SetStateAction<Number>>,
+  mapCenter: MapLocation,
+  setMapCenter: React.Dispatch<React.SetStateAction<MapLocation>>,
+  setReadMapCenter: React.Dispatch<React.SetStateAction<MapLocation>>,
+  readMapCenter: MapLocation,
+  locations: MapItem[]
+}
+
 const mockData: MapItem[] = [
   {
     "id": 1,
@@ -57,7 +73,7 @@ const mockData: MapItem[] = [
 
 ]
 
-const MapAppController = () => {
+function MapAppController() {
   const [mapCenter, setMapCenter] = useState([9.96403, 53.56826] as MapLocation)
   const [readMapCenter, setReadMapCenter] = useState([9.96403, 53.56826] as MapLocation)
   const [activeLocationId, setActiveLocationId] = useState(-1)
@@ -72,23 +88,33 @@ const MapAppController = () => {
             readMapCenter={readMapCenter}
             setReadMapCenter={setReadMapCenter}
             locations={mockData}
-            activeLocationId={activeLocationId} />
+            activeLocationId={activeLocationId}
+            setActiveLocationId={setActiveLocationId} />
         </div>
       </div>
-      <ContentView setMapCenter={setMapCenter} locations={mockData} activeLocationId={activeLocationId} setActiveLocationId={setActiveLocationId} />
+      <ContentView
+        setMapCenter={setMapCenter}
+        locations={mockData}
+        activeLocationId={activeLocationId}
+        setActiveLocationId={setActiveLocationId} />
     </>
   )
 }
 
-const Card = (props) => {
+function Card(props: CardProps) {
+  const {
+    children,
+    onClick,
+    className
+  } = props
   return (
-    <div className='card' onClick={props.onClick}>
-      {props.children}
+    <div className={`card ${className}`} onClick={onClick}>
+      {children}
     </div>
   )
 }
 
-const LocationCardContent = (props) => {
+function LocationCardContent(props) {
   const data: MapItem = props.data
   return (
     <div>
@@ -101,10 +127,13 @@ const LocationCardContent = (props) => {
   )
 }
 
-const ContentView = (props) => {
-  const locations: MapItem[] = props.locations
-  const setMapCenter = props.setMapCenter
-  const setActiveLocationId = props.setActiveLocationId
+function ContentView(props) {
+  const {
+    locations,
+    setMapCenter,
+    activeLocationId,
+    setActiveLocationId
+  } = props
 
   const handleClick = (ev, id, coordinates) => {
     ev.preventDefault()
@@ -115,8 +144,12 @@ const ContentView = (props) => {
   return (
     <div className='contentView'>
       {locations.map(l => {
+        let className = ''
+        if (activeLocationId === l.id) {
+          className = 'active'
+        }
         return (
-          <Card onClick={(ev) => handleClick(ev, l.id, l.coordinates)}>
+          <Card onClick={(ev) => handleClick(ev, l.id, l.coordinates)} key={l.id} className={className}>
             <LocationCardContent data={l} ></LocationCardContent>
           </Card>
         )
@@ -125,43 +158,41 @@ const ContentView = (props) => {
   )
 }
 
-const getIconStyle = (isActive: boolean) => {
-  if (isActive) {
-    return 'b_default_marker_active'
-  } else {
-    return 'b_default_marker'
-  }
-}
-
 const Map = ReactMapboxGl({
   accessToken: process.env.MAPBOX_KEY
 })
 
-const MapView = React.memo((props: any) => {
-  const activeLocationId = props.activeLocationId
-  const mapCenter = props.mapCenter
-  const setMapCenter = props.setMapCenter
-  const setReadMapCenter = props.setReadMapCenter
-  const readMapCenter = props.readMapCenter
-  const locations = props.locations
-  const [zoom, setZoom] = useState([12] as [number])
+const MapView = React.memo((props: MapViewProps) => {
+  const {
+    activeLocationId,
+    setActiveLocationId,
+    mapCenter,
+    setMapCenter,
+    setReadMapCenter,
+    readMapCenter,
+    locations,
+  } = props
 
+  const [zoom, setZoom] = useState([12] as [number])
   const equalizedMapCenter = [...mapCenter].map(i => Number(i.toFixed(5)))
 
   useEffect(() => {
-    // update mapCenter when map has moved
+    // only update mapCenter when map has moved
     if (!_.isEqual(equalizedMapCenter, readMapCenter)) {
       setMapCenter(readMapCenter)
     }
   }, [readMapCenter])
 
   const handleMoveEnd = (map: mapboxgl.Map) => {
-    console.log("handleMoveEnd")
-    setReadMapCenter(map.getCenter().toArray().map(i => Number(i.toFixed(5))))
+    setReadMapCenter(map.getCenter().toArray().map(i => Number(i.toFixed(5))) as [number, number])
     setZoom([map.getZoom()])
   }
 
-  const getIcon = (id) => {
+  const handleClickOnFeature = (id) => {
+    setActiveLocationId(id)
+  }
+
+  const getFeatureIcon = (id: number) => {
     if (id === activeLocationId) {
       return 'b_default_active_marker'
     } else {
@@ -180,8 +211,8 @@ const MapView = React.memo((props: any) => {
         height: '100%',
         width: '100%'
       }}
-    ><Layer type="symbol" id="marker" layout={{ 'icon-image': ['get', 'icon'] }}>
-        {locations.map(i => <Feature coordinates={i.coordinates} properties={{ 'icon': getIcon(i.id) }} />)}
+    ><Layer type="symbol" id="marker" layout={{ 'icon-image': ['get', 'icon'], 'icon-allow-overlap': true }}>
+        {locations.map(i => <Feature coordinates={i.coordinates} onClick={() => handleClickOnFeature(i.id)} properties={{ 'icon': getFeatureIcon(i.id), 'id': i.id }} />)}
       </Layer>
     </Map>
   )

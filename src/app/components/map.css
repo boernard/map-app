@@ -21,6 +21,11 @@
   margin: 12px 4px 4px;
   padding: 4px 8px;
   cursor: pointer;
+  border-top: 4px solid transparent;
+}
+
+.card.active {
+  border-top: 4px solid #FC6641;
 }
 
 .card .header {
