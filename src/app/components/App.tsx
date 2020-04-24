@@ -169,6 +169,7 @@ function ContentView(props) {
   useEffect(() => {
     if (featureClicked) {
       scrollToPosition(refs[activeLocationId])
+
       setFeatureClicked(false)
     }
   }, [featureClicked])
