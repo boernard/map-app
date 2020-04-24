@@ -9,13 +9,18 @@
 }
 
 .contentView {
+  position: absolute;
   height: 50vh;
-  padding: 0 8px;
+  padding: 10px 8px;
   overflow: scroll;
 }
 
+.contentView > div:last-child {
+  margin-bottom: 50px;
+}
+
 .card {
-  background: #FFFFFF;
+  background: #ffffff;
   box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.11);
   border-radius: 3px;
   margin: 12px 4px 4px;
@@ -25,7 +30,7 @@
 }
 
 .card.active {
-  border-top: 4px solid #FC6641;
+  border-top: 4px solid #fc6641;
 }
 
 .card .header {
