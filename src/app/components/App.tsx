@@ -38,6 +38,7 @@ type MapViewProps = {
   setReadMapCenter: React.Dispatch<React.SetStateAction<MapLocation>>
   readMapCenter: MapLocation
   locations: MapItem[]
+  setFeatureClicked: React.Dispatch<React.SetStateAction<Boolean>>
 }
 
 const mockData: MapItem[] = [
@@ -82,6 +83,7 @@ function MapAppController() {
   const [mapCenter, setMapCenter] = useState([9.96403, 53.56826] as MapLocation)
   const [readMapCenter, setReadMapCenter] = useState([9.96403, 53.56826] as MapLocation)
   const [activeLocationId, setActiveLocationId] = useState(-1)
+  const [featureClicked, setFeatureClicked] = useState(false)
 
   return (
     <>
@@ -95,6 +97,7 @@ function MapAppController() {
             locations={mockData}
             activeLocationId={activeLocationId}
             setActiveLocationId={setActiveLocationId}
+            setFeatureClicked={setFeatureClicked}
           />
         </div>
       </div>
@@ -103,6 +106,8 @@ function MapAppController() {
         locations={mockData}
         activeLocationId={activeLocationId}
         setActiveLocationId={setActiveLocationId}
+        setFeatureClicked={setFeatureClicked}
+        featureClicked={featureClicked}
       />
     </>
   )
@@ -131,7 +136,21 @@ function LocationCardContent(props) {
 }
 
 function ContentView(props) {
-  const { locations, setMapCenter, activeLocationId, setActiveLocationId } = props
+  const {
+    locations,
+    setMapCenter,
+    activeLocationId,
+    setActiveLocationId,
+    featureClicked,
+    setFeatureClicked,
+  } = props
+
+  const refs = locations.reduce((acc, value) => {
+    acc[value.id] = React.createRef()
+    return acc
+  }, {})
+
+  const contentViewRef = useRef(null)
 
   const handleClick = (ev, id, coordinates) => {
     ev.preventDefault()
@@ -139,21 +158,38 @@ function ContentView(props) {
     setActiveLocationId(id)
   }
 
+  const scrollToPosition = (htmlRef) => {
+    const scrollToPosition = htmlRef.current.offsetTop - 15
+    contentViewRef.current.scrollTo({
+      behavior: 'smooth',
+      top: scrollToPosition,
+    })
+  }
+
+  useEffect(() => {
+    if (featureClicked) {
+      scrollToPosition(refs[activeLocationId])
+      setFeatureClicked(false)
+    }
+  }, [featureClicked])
+
   return (
-    <div className='contentView'>
-      {locations.map((l) => {
+    <div className='contentView' ref={contentViewRef}>
+      {locations.map((location) => {
         let className = ''
-        if (activeLocationId === l.id) {
+        if (activeLocationId === location.id) {
           className = 'active'
         }
         return (
-          <Card
-            onClick={(ev) => handleClick(ev, l.id, l.coordinates)}
-            key={l.id}
-            className={className}
+          <div
+            ref={refs[location.id]}
+            key={location.id}
+            onClick={(ev) => handleClick(ev, location.id, location.coordinates)}
           >
-            <LocationCardContent data={l}></LocationCardContent>
-          </Card>
+            <Card className={className}>
+              <LocationCardContent data={location}></LocationCardContent>
+            </Card>
+          </div>
         )
       })}
     </div>
@@ -162,6 +198,8 @@ function ContentView(props) {
 
 const Map = ReactMapboxGl({
   accessToken: process.env.MAPBOX_KEY,
+  dragRotate: false,
+  pitchWithRotate: false,
 })
 
 const MapView = React.memo((props: MapViewProps) => {
@@ -173,6 +211,7 @@ const MapView = React.memo((props: MapViewProps) => {
     setReadMapCenter,
     readMapCenter,
     locations,
+    setFeatureClicked,
   } = props
 
   const [zoom, setZoom] = useState([12] as [number])
@@ -197,6 +236,7 @@ const MapView = React.memo((props: MapViewProps) => {
 
   const handleClickOnFeature = (id) => {
     setActiveLocationId(id)
+    setFeatureClicked(true)
   }
 
   const getFeatureIcon = (id: number) => {
@@ -226,6 +266,7 @@ const MapView = React.memo((props: MapViewProps) => {
       >
         {locations.map((i) => (
           <Feature
+            key={i.id}
             coordinates={i.coordinates}
             onClick={() => handleClickOnFeature(i.id)}
             properties={{ icon: getFeatureIcon(i.id), id: i.id }}
