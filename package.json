@@ -8,7 +8,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "./node_modules/.bin/webpack --config webpack.dev.js",
     "build-prod": "./node_modules/.bin/webpack --config webpack.prod.js",
-    "start": "yarn run build && node server.js",
+    "start": "export NODE_ENV=development && yarn run build && node server.js",
     "clean": "rm -rf ./node_modules",
     "predeploy": "yarn run build-prod",
     "deploy": "gh-pages -d dist"

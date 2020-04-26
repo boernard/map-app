@@ -7,4 +7,8 @@ module.exports = merge(common, {
   devServer: {
     host: '0.0.0.0',
   },
+  entry: {
+    app: ['./src/app/App.tsx', 'webpack-hot-middleware/client'],
+    vendor: ['react', 'react-dom'],
+  },
 })

@@ -13,10 +13,6 @@ module.exports = {
     }),
     new webpack.HotModuleReplacementPlugin(),
   ],
-  entry: {
-    app: ['./src/app/App.tsx', 'webpack-hot-middleware/client'],
-    vendor: ['react', 'react-dom'],
-  },
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'js/[name].bundle.js',
