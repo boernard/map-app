@@ -1,7 +1,12 @@
 import * as React from 'react'
 import { useState, useEffect, useRef, useCallback } from 'react'
-import * as _ from 'lodash'
 import ReactMapboxGl, { Layer, Feature } from 'react-mapbox-gl'
+
+import * as _ from 'lodash'
+import { polyfill } from 'seamless-scroll-polyfill/dist/esm/Element.scrollTo'
+//enable smoothscroll with ease out function for all browsers
+polyfill({ duration: 200, timingFunc: (k) => 1 - Math.pow(1 - k, 1.675) })
+
 import './map.css'
 
 type MapItem = {

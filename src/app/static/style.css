@@ -1,5 +1,6 @@
 :root {
-  --light-grey: #D7D7D7
+  --light-grey: #d7d7d7;
+  height: 100%;
 }
 
 html {
@@ -7,6 +8,11 @@ html {
   font-size: 14px;
   color: #252525;
   line-height: 1.5;
+}
+
+#root {
+  height: 100vh; /* Fallback for browsers that do not support Custom Properties */
+  height: calc(var(--vh, 1vh) * 100);
 }
 
 h3 {
