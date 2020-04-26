@@ -2,7 +2,8 @@ const path = require('path'),
   webpack = require('webpack'),
   HtmlWebpackPlugin = require('html-webpack-plugin'),
   { CleanWebpackPlugin } = require('clean-webpack-plugin'),
-  Dotenv = require('dotenv-webpack')
+  Dotenv = require('dotenv-webpack'),
+  AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin')
 
 module.exports = {
   plugins: [
@@ -11,6 +12,11 @@ module.exports = {
       template: path.resolve(__dirname, 'src', 'app', 'index.html'),
       title: 'Production',
     }),
+    new AddAssetHtmlPlugin([
+      {
+        filepath: require.resolve('./src/app/utils/inobounce.js'),
+      },
+    ]),
     new webpack.HotModuleReplacementPlugin(),
   ],
   output: {
